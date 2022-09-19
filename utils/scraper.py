@@ -87,11 +87,20 @@ class UcasUniversityScraper(UniversityScraper):
                 '.content-block__section.content-block__section--grow p')
             .text
         )
-        postcode = location.split(',')[-1]
+        address_components = location.split(',')
+        if len(address_components) > 2:
+            postcode = address_components[-1].strip()
+            county = address_components[-2].strip()
+        elif len(address_components) == 1:
+            postcode = None
+            county = address_components[0].strip()
+        else:
+            postcode = county = None
 
         uni_data = {'name': uni_name,
                     'url': uni_url,
                     'address': location,
+                    'county': county,
                     'postcode': postcode}
         return Unversity(**uni_data)
 
